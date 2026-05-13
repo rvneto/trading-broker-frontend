@@ -5,6 +5,7 @@ import DashboardPage from './pages/DashboardPage'
 import OrdersPage from './pages/OrdersPage'
 import WalletPage from './pages/WalletPage'
 import PrivateRoute from './components/layout/PrivateRoute'
+import MainLayout from './components/layout/MainLayout'
 
 const queryClient = new QueryClient()
 
@@ -15,10 +16,12 @@ export default function App() {
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/" element={<PrivateRoute />}>
-            <Route index element={<Navigate to="/dashboard" replace />} />
-            <Route path="dashboard" element={<DashboardPage />} />
-            <Route path="orders" element={<OrdersPage />} />
-            <Route path="wallet" element={<WalletPage />} />
+            <Route element={<MainLayout />}>
+              <Route index element={<Navigate to="/dashboard" replace />} />
+              <Route path="dashboard" element={<DashboardPage />} />
+              <Route path="orders" element={<OrdersPage />} />
+              <Route path="wallet" element={<WalletPage />} />
+            </Route>
           </Route>
         </Routes>
       </BrowserRouter>
