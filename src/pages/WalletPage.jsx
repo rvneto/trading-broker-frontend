@@ -1,19 +1,43 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts'
 import useAuthStore from '../store/authStore'
 import usePageTitle from '../hooks/usePageTitle'
-import { getWalletSummary, getPositions } from '../services/walletService'
+import { getWalletSummary, getPositions, getTransactions } from '../services/walletService'
 import { formatBRL, formatPercent } from '../utils/format'
 
 const COLORS = ['#d4a017', '#4ade80', '#f87171', '#60a5fa', '#a78bfa', '#fb923c', '#34d399', '#f472b6']
 
+const TX_FILTERS = ['ALL', 'DEPOSIT', 'WITHDRAWAL', 'RESERVE', 'SETTLEMENT', 'REFUND']
+
+const txStyle = {
+  DEPOSIT:    { cls: 'bg-green-950 text-green-400 border-green-900',   group: 'DEPOSIT' },
+  WITHDRAWAL: { cls: 'bg-red-950 text-red-400 border-red-900',         group: 'WITHDRAWAL' },
+  RESERVE:    { cls: 'bg-yellow-950 text-yellow-400 border-yellow-800', group: 'RESERVE' },
+  SETTLEMENT: { cls: 'bg-blue-950 text-blue-400 border-blue-900',      group: 'SETTLEMENT' },
+  REFUND:     { cls: 'bg-purple-950 text-purple-400 border-purple-900', group: 'REFUND' },
+}
+
+const txAmountColor = (type) => {
+  if (type === 'DEPOSIT' || type === 'REFUND') return 'text-green-400'
+  if (type === 'WITHDRAWAL' || type === 'SETTLEMENT') return 'text-red-400'
+  return 'text-yellow-400'
+}
+
+const txSign = (type) => {
+  if (type === 'DEPOSIT' || type === 'REFUND') return '+'
+  return '-'
+}
+
 export default function WalletPage() {
   usePageTitle('wallet.title')
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const user = useAuthStore((s) => s.user)
   const userId = user?.id
+
+  const [txFilter, setTxFilter] = useState('ALL')
+  const [txSort, setTxSort] = useState('desc')
 
   const { data: summary, isLoading: loadingSummary } = useQuery({
     queryKey: ['wallet-summary', userId],
@@ -25,6 +49,13 @@ export default function WalletPage() {
   const { data: positions = [], isLoading: loadingPositions } = useQuery({
     queryKey: ['positions', userId],
     queryFn: () => getPositions(userId),
+    enabled: !!userId,
+    retry: false,
+  })
+
+  const { data: transactions = [], isLoading: loadingTx } = useQuery({
+    queryKey: ['transactions', userId],
+    queryFn: () => getTransactions(userId),
     enabled: !!userId,
     retry: false,
   })
@@ -50,6 +81,29 @@ export default function WalletPage() {
     if (balance > 0) items.unshift({ name: t('dashboard.balance'), value: balance })
     return items
   }, [enriched, balance, t])
+
+  const filteredTx = useMemo(() => {
+    let list = txFilter === 'ALL' ? transactions : transactions.filter((tx) => tx.transactionType === txFilter)
+    return [...list].sort((a, b) => {
+      const da = new Date(a.createdAt), db = new Date(b.createdAt)
+      return txSort === 'desc' ? db - da : da - db
+    })
+  }, [transactions, txFilter, txSort])
+
+  const formatDateTime = (iso) => {
+    if (!iso) return '—'
+    return new Intl.DateTimeFormat(i18n.language === 'en' ? 'en-US' : 'pt-BR', {
+      day: '2-digit', month: '2-digit', year: '2-digit',
+      hour: '2-digit', minute: '2-digit', second: '2-digit',
+    }).format(new Date(iso))
+  }
+
+  const txDescription = (tx) => {
+    if (tx.transactionType === 'DEPOSIT') return t('wallet.tx_deposit')
+    if (tx.transactionType === 'WITHDRAWAL') return t('wallet.tx_withdrawal')
+    if (tx.orderId) return `${t(`wallet.tx_${tx.transactionType.toLowerCase()}`)} — ${t('wallet.tx_order')} #${tx.orderId}`
+    return t(`wallet.tx_${tx.transactionType.toLowerCase()}`)
+  }
 
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload?.length) {
@@ -88,7 +142,7 @@ export default function WalletPage() {
         <StatCard label="P&L total" value={formatBRL(totalPnl)} sub={formatPercent(totalPnlPct)} green={totalPnl >= 0} red={totalPnl < 0} loading={loadingPositions} />
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-[1fr_220px] gap-4">
+      <div className="grid grid-cols-1 xl:grid-cols-[1fr_220px] gap-4 mb-4">
         <div className="bg-[#111111] border border-[#2a2a2a] rounded-xl p-4">
           <div className="text-sm font-medium text-[#f5f0e0] mb-4">{t('wallet.open_positions')}</div>
           {loadingPositions ? (
@@ -169,6 +223,77 @@ export default function WalletPage() {
             </>
           )}
         </div>
+      </div>
+
+      <div className="bg-[#111111] border border-[#2a2a2a] rounded-xl p-4">
+        <div className="flex justify-between items-center mb-4 flex-wrap gap-2">
+          <span className="text-sm font-medium text-[#f5f0e0]">{t('wallet.tx_history')}</span>
+          <div className="flex items-center gap-2 flex-wrap">
+            <button
+              onClick={() => setTxSort(txSort === 'desc' ? 'asc' : 'desc')}
+              className="flex items-center gap-1.5 text-xs text-[#6b6b6b] hover:text-[#d4a017] border border-[#2a2a2a] hover:border-[#d4a017] rounded-lg px-2.5 py-1 transition-colors"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d={txSort === 'desc'
+                  ? "M3 4h13M3 8h9M3 12h5m10 4l-4-4m4 4l4-4"
+                  : "M3 4h13M3 8h9M3 12h5m10-4l-4 4m4-4l4 4"} />
+              </svg>
+              {txSort === 'desc' ? t('wallet.sort_newest') : t('wallet.sort_oldest')}
+            </button>
+            <div className="flex gap-1.5 flex-wrap">
+              {TX_FILTERS.map((f) => (
+                <button key={f} onClick={() => setTxFilter(f)}
+                  className={`text-xs px-3 py-1 rounded-full border transition-colors ${
+                    txFilter === f
+                      ? 'border-[#d4a017] text-[#d4a017] bg-[#1a1500]'
+                      : 'border-[#2a2a2a] text-[#6b6b6b] hover:border-[#444]'
+                  }`}>
+                  {f === 'ALL' ? t('orders.filter_all') : f}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {loadingTx ? (
+          <div className="text-[#6b6b6b] text-xs py-4">{t('dashboard.loading')}</div>
+        ) : filteredTx.length === 0 ? (
+          <div className="text-[#6b6b6b] text-xs py-4">{t('wallet.no_transactions')}</div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs border-collapse">
+              <thead>
+                <tr className="border-b border-[#2a2a2a]">
+                  <th className="text-left text-[#6b6b6b] font-normal py-2 px-2">{t('wallet.tx_type')}</th>
+                  <th className="text-left text-[#6b6b6b] font-normal py-2 px-2">{t('wallet.tx_desc')}</th>
+                  <th className="text-right text-[#6b6b6b] font-normal py-2 px-2">{t('wallet.tx_amount')}</th>
+                  <th className="text-right text-[#6b6b6b] font-normal py-2 px-2">{t('wallet.tx_date')}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredTx.map((tx) => {
+                  const st = txStyle[tx.transactionType] || txStyle.DEPOSIT
+                  const color = txAmountColor(tx.transactionType)
+                  const sign = txSign(tx.transactionType)
+                  return (
+                    <tr key={tx.id} className="border-b border-[#1a1a1a] last:border-0 hover:bg-[#161616] transition-colors">
+                      <td className="py-2.5 px-2">
+                        <span className={`inline-block text-xs px-2 py-0.5 rounded-full border ${st.cls}`}>
+                          {tx.transactionType}
+                        </span>
+                      </td>
+                      <td className="py-2.5 px-2 text-[#6b6b6b]">{txDescription(tx)}</td>
+                      <td className={`py-2.5 px-2 text-right font-medium ${color}`}>
+                        {sign}{formatBRL(Math.abs(tx.amount))}
+                      </td>
+                      <td className="py-2.5 px-2 text-right text-[#6b6b6b]">{formatDateTime(tx.createdAt)}</td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   )

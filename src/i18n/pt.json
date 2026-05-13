@@ -84,6 +84,20 @@
     "invested": "ativos investidos",
     "open_positions": "Posições abertas",
     "no_positions": "Nenhuma posição aberta.",
-    "distribution": "Distribuição"
+    "distribution": "Distribuição",
+    "tx_history": "Histórico de movimentações",
+    "tx_type": "Tipo",
+    "tx_desc": "Descrição",
+    "tx_amount": "Valor",
+    "tx_date": "Data",
+    "tx_deposit": "Depósito em conta",
+    "tx_withdrawal": "Saque em conta",
+    "tx_reserve": "Reserva de saldo",
+    "tx_settlement": "Liquidação",
+    "tx_refund": "Estorno",
+    "tx_order": "Ordem",
+    "no_transactions": "Nenhuma movimentação encontrada.",
+    "sort_newest": "Mais recente",
+    "sort_oldest": "Mais antigo"
   }
 }

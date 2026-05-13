@@ -11,7 +11,7 @@
     "btn_login": "Sign in to platform",
     "btn_register": "Create my account",
     "btn_loading": "Please wait...",
-    "no_account": "Don not have an account?",
+    "no_account": "Don't have an account?",
     "register_link": "Sign up for free",
     "has_account": "Already have an account?",
     "login_link": "Sign in",
@@ -84,6 +84,20 @@
     "invested": "invested assets",
     "open_positions": "Open positions",
     "no_positions": "No open positions.",
-    "distribution": "Distribution"
+    "distribution": "Distribution",
+    "tx_history": "Transaction history",
+    "tx_type": "Type",
+    "tx_desc": "Description",
+    "tx_amount": "Amount",
+    "tx_date": "Date",
+    "tx_deposit": "Account deposit",
+    "tx_withdrawal": "Account withdrawal",
+    "tx_reserve": "Balance reserve",
+    "tx_settlement": "Settlement",
+    "tx_refund": "Refund",
+    "tx_order": "Order",
+    "no_transactions": "No transactions found.",
+    "sort_newest": "Newest first",
+    "sort_oldest": "Oldest first"
   }
 }
