@@ -73,10 +73,17 @@
   },
   "wallet": {
     "title": "Carteira",
+    "subtitle": "Posições e patrimônio",
     "asset": "Ativo",
     "quantity": "Quantidade",
     "avg_price": "Preço médio",
     "current_price": "Preço atual",
-    "pnl": "P&L"
+    "total_value": "Valor total",
+    "pnl": "P&L",
+    "positions_value": "Valor em posições",
+    "invested": "ativos investidos",
+    "open_positions": "Posições abertas",
+    "no_positions": "Nenhuma posição aberta.",
+    "distribution": "Distribuição"
   }
 }

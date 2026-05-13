@@ -11,7 +11,7 @@
     "btn_login": "Sign in to platform",
     "btn_register": "Create my account",
     "btn_loading": "Please wait...",
-    "no_account": "Don't have an account?",
+    "no_account": "Don not have an account?",
     "register_link": "Sign up for free",
     "has_account": "Already have an account?",
     "login_link": "Sign in",
@@ -73,10 +73,17 @@
   },
   "wallet": {
     "title": "Wallet",
+    "subtitle": "Positions and patrimony",
     "asset": "Asset",
     "quantity": "Quantity",
     "avg_price": "Avg price",
     "current_price": "Current price",
-    "pnl": "P&L"
+    "total_value": "Total value",
+    "pnl": "P&L",
+    "positions_value": "Positions value",
+    "invested": "invested assets",
+    "open_positions": "Open positions",
+    "no_positions": "No open positions.",
+    "distribution": "Distribution"
   }
 }
