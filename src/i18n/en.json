@@ -30,9 +30,17 @@
   "dashboard": {
     "title": "Dashboard",
     "balance": "Available balance",
+    "balance_sub": "in account",
     "patrimony": "Total patrimony",
+    "patrimony_sub": "balance + positions",
+    "patrimony_chart": "Patrimony evolution",
     "open_orders": "Open orders",
-    "positions": "Positions"
+    "pending": "pending",
+    "positions": "Open positions",
+    "see_all": "See all",
+    "loading": "Loading...",
+    "no_positions": "No open positions.",
+    "coming_soon": "—"
   },
   "orders": {
     "title": "Orders",
