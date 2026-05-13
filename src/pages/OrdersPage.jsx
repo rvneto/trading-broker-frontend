@@ -5,7 +5,7 @@ import useAuthStore from '../store/authStore'
 import usePageTitle from '../hooks/usePageTitle'
 import { getOrders, createOrder } from '../services/orderService'
 import { getAssets } from '../services/assetService'
-import { getWallet } from '../services/walletService'
+import { getWalletSummary } from '../services/walletService'
 import { formatBRL, formatPercent } from '../utils/format'
 
 const STATUS_FILTERS = ['ALL', 'PENDING', 'EXECUTED', 'REJECTED', 'CANCELLED']
@@ -32,9 +32,9 @@ export default function OrdersPage() {
   const [successMsg, setSuccessMsg] = useState('')
   const [errorMsg, setErrorMsg] = useState('')
 
-  const { data: wallet } = useQuery({
-    queryKey: ['wallet', userId],
-    queryFn: () => getWallet(userId),
+  const { data: summary } = useQuery({
+    queryKey: ['wallet-summary', userId],
+    queryFn: () => getWalletSummary(userId),
     enabled: !!userId,
   })
 
@@ -69,7 +69,7 @@ export default function OrdersPage() {
   const unitPrice = price ? parseFloat(price.replace(',', '.')) : (selectedAsset?.currentPrice ?? 0)
   const qty = parseInt(quantity) || 0
   const total = unitPrice * qty
-  const balance = wallet?.balance ?? 0
+  const balance = summary?.availableBalance ?? 0
   const afterBalance = balance - total
   const insufficient = side === 'BUY' && qty > 0 && total > balance
 

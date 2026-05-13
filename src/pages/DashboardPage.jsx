@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import useAuthStore from '../store/authStore'
 import usePageTitle from '../hooks/usePageTitle'
-import { getWallet, getPositions } from '../services/walletService'
+import { getWalletSummary, getPositions } from '../services/walletService'
 import { formatBRL, formatPercent, formatDate } from '../utils/format'
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell
@@ -15,10 +15,10 @@ const weekDays = {
 }
 
 const mockChartData = (lang) =>
-  weekDays[lang] ? weekDays[lang].map((day, i) => ({
+  (weekDays[lang] || weekDays.pt).map((day, i) => ({
     day,
     value: 34000 + Math.round(Math.sin(i) * 3000 + i * 800),
-  })) : []
+  }))
 
 export default function DashboardPage() {
   usePageTitle('dashboard.title')
@@ -27,27 +27,28 @@ export default function DashboardPage() {
   const user = useAuthStore((s) => s.user)
   const userId = user?.id
 
-  const { data: wallet, isLoading: loadingWallet } = useQuery({
-    queryKey: ['wallet', userId],
-    queryFn: () => getWallet(userId),
+  const { data: summary, isLoading: loadingSummary } = useQuery({
+    queryKey: ['wallet-summary', userId],
+    queryFn: () => getWalletSummary(userId),
     enabled: !!userId,
+    retry: false,
   })
 
   const { data: positions, isLoading: loadingPositions } = useQuery({
     queryKey: ['positions', userId],
     queryFn: () => getPositions(userId),
     enabled: !!userId,
+    retry: false,
   })
 
-  const balance = wallet?.balance ?? 0
-  const totalPositionsValue = positions?.reduce(
-    (acc, p) => acc + (p.currentPrice ?? p.averagePrice) * p.quantity, 0
-  ) ?? 0
-  const totalPatrimony = balance + totalPositionsValue
+  const balance = summary?.availableBalance ?? 0
+  const positionsValue = summary?.positionsValue ?? 0
+  const totalEquity = summary?.totalEquity ?? 0
+
   const totalPnl = positions?.reduce(
     (acc, p) => acc + ((p.currentPrice ?? p.averagePrice) - p.averagePrice) * p.quantity, 0
   ) ?? 0
-  const pnlPercent = totalPositionsValue > 0 ? (totalPnl / (totalPositionsValue - totalPnl)) * 100 : 0
+  const pnlPct = positionsValue > 0 ? (totalPnl / (positionsValue - totalPnl)) * 100 : 0
 
   const chartData = mockChartData(i18n.language)
 
@@ -82,26 +83,26 @@ export default function DashboardPage() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
         <StatCard
           label={t('dashboard.balance')}
-          value={loadingWallet ? '...' : formatBRL(balance)}
+          value={loadingSummary ? '...' : formatBRL(balance)}
           sub={t('dashboard.balance_sub')}
           gold
         />
         <StatCard
+          label={t('wallet.positions_value')}
+          value={loadingSummary ? '...' : formatBRL(positionsValue)}
+          sub={t('wallet.invested')}
+        />
+        <StatCard
           label={t('dashboard.patrimony')}
-          value={loadingWallet || loadingPositions ? '...' : formatBRL(totalPatrimony)}
+          value={loadingSummary ? '...' : formatBRL(totalEquity)}
           sub={t('dashboard.patrimony_sub')}
         />
         <StatCard
           label="P&L total"
           value={loadingPositions ? '...' : formatBRL(totalPnl)}
-          sub={loadingPositions ? '' : formatPercent(pnlPercent)}
+          sub={loadingPositions ? '' : formatPercent(pnlPct)}
           green={totalPnl >= 0}
           red={totalPnl < 0}
-        />
-        <StatCard
-          label={t('dashboard.open_orders')}
-          value={t('dashboard.coming_soon')}
-          sub={t('dashboard.pending')}
         />
       </div>
 

@@ -32,14 +32,12 @@ export default function LoginPage() {
         setAuth(data.user, data.token)
         navigate('/dashboard')
       } else {
-        await register(name, email, password)
-        setTab('login')
-        setEmail('')
-        setPassword('')
-        setName('')
+        const data = await register(name, email, password)
+        setAuth(data.user, data.token)
+        navigate('/dashboard')
       }
     } catch (err) {
-      setError(err.response?.data?.message || t('login.error_generic'))
+      setError(err.response?.data?.error || err.response?.data?.message || t('login.error_generic'))
     } finally {
       setLoading(false)
     }
@@ -112,11 +110,9 @@ export default function LoginPage() {
               <div>
                 <label className="block text-xs text-[#8a8a8a] mb-1.5">{t('login.name')}</label>
                 <input
-                  type="text"
-                  value={name}
+                  type="text" value={name}
                   onChange={(e) => setName(e.target.value)}
-                  required
-                  placeholder={t('login.placeholder_name')}
+                  required placeholder={t('login.placeholder_name')}
                   className="w-full bg-[#0a0a0a] border border-[#2a2a2a] rounded-lg px-3 py-2.5 text-sm text-[#f5f0e0] placeholder-[#444] focus:outline-none focus:border-[#d4a017] transition-colors"
                 />
               </div>
@@ -125,11 +121,9 @@ export default function LoginPage() {
             <div>
               <label className="block text-xs text-[#8a8a8a] mb-1.5">{t('login.email')}</label>
               <input
-                type="email"
-                value={email}
+                type="email" value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                required
-                placeholder={t('login.placeholder_email')}
+                required placeholder={t('login.placeholder_email')}
                 className="w-full bg-[#0a0a0a] border border-[#2a2a2a] rounded-lg px-3 py-2.5 text-sm text-[#f5f0e0] placeholder-[#444] focus:outline-none focus:border-[#d4a017] transition-colors"
               />
             </div>
@@ -137,11 +131,9 @@ export default function LoginPage() {
             <div>
               <label className="block text-xs text-[#8a8a8a] mb-1.5">{t('login.password')}</label>
               <input
-                type="password"
-                value={password}
+                type="password" value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                required
-                placeholder={t('login.placeholder_password')}
+                required placeholder={t('login.placeholder_password')}
                 className="w-full bg-[#0a0a0a] border border-[#2a2a2a] rounded-lg px-3 py-2.5 text-sm text-[#f5f0e0] placeholder-[#444] focus:outline-none focus:border-[#d4a017] transition-colors"
               />
             </div>
@@ -159,7 +151,11 @@ export default function LoginPage() {
               disabled={loading}
               className="w-full bg-[#d4a017] hover:bg-[#e8b420] disabled:opacity-50 disabled:cursor-not-allowed text-[#0a0a0a] font-medium text-sm py-2.5 rounded-lg transition-colors mt-2"
             >
-              {loading ? t('login.btn_loading') : tab === 'login' ? t('login.btn_login') : t('login.btn_register')}
+              {loading
+                ? t('login.btn_loading')
+                : tab === 'login'
+                  ? t('login.btn_login')
+                  : t('login.btn_register')}
             </button>
 
           </form>
