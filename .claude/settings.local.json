@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rtk ls *)",
+      "PowerShell(New-Item *)",
+      "PowerShell(Get-ChildItem -Recurse src | Where-Object { $_.PSIsContainer } | Select-Object FullName)",
+      "PowerShell(Get-ChildItem -Recurse \"C:\\\\Developer\\\\Projetos\\\\trading\\\\trading-broker-frontend\\\\src\" | Where-Object { $_.PSIsContainer } | Select-Object FullName)",
+      "Bash(rtk find *)"
+    ]
+  }
+}
