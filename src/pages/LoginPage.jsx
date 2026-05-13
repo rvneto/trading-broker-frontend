@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import useAuthStore from '../store/authStore'
 import { login, register } from '../services/authService'
 
 export default function LoginPage() {
   const navigate = useNavigate()
+  const { t, i18n } = useTranslation()
   const setAuth = useAuthStore((s) => s.login)
 
   const [tab, setTab] = useState('login')
@@ -13,6 +15,12 @@ export default function LoginPage() {
   const [name, setName] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+
+  const toggleLanguage = () => {
+    const next = i18n.language === 'pt' ? 'en' : 'pt'
+    i18n.changeLanguage(next)
+    localStorage.setItem('language', next)
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -26,13 +34,12 @@ export default function LoginPage() {
       } else {
         await register(name, email, password)
         setTab('login')
-        setError('')
         setEmail('')
         setPassword('')
         setName('')
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'Ocorreu um erro. Tente novamente.')
+      setError(err.response?.data?.message || t('login.error_generic'))
     } finally {
       setLoading(false)
     }
@@ -40,6 +47,17 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center px-4">
+
+      <button
+        onClick={toggleLanguage}
+        className="absolute top-4 right-4 flex items-center gap-2 text-xs text-[#6b6b6b] hover:text-[#d4a017] border border-[#2a2a2a] hover:border-[#d4a017] rounded-lg px-3 py-1.5 transition-colors"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 21a9 9 0 100-18 9 9 0 000 18zm0 0c-2.5 0-4.5-4-4.5-9s2-9 4.5-9m0 18c2.5 0 4.5-4 4.5-9s-2-9-4.5-9M3 12h18" />
+        </svg>
+        {i18n.language === 'pt' ? 'EN' : 'PT'}
+      </button>
+
       <div className="w-full max-w-sm">
 
         <div className="flex items-center justify-center gap-3 mb-8">
@@ -47,8 +65,8 @@ export default function LoginPage() {
             B³
           </div>
           <div>
-            <div className="text-[#f5f0e0] font-medium text-lg">My Broker B3</div>
-            <div className="text-[#6b6b6b] text-xs">Simulador de corretora</div>
+            <div className="text-[#f5f0e0] font-medium text-lg">{t('login.title')}</div>
+            <div className="text-[#6b6b6b] text-xs">{t('login.subtitle')}</div>
           </div>
         </div>
 
@@ -65,7 +83,7 @@ export default function LoginPage() {
                   : 'text-[#6b6b6b] hover:text-[#f5f0e0]'
               }`}
             >
-              Entrar
+              {t('login.tab_login')}
             </button>
             <button
               onClick={() => { setTab('register'); setError('') }}
@@ -75,7 +93,7 @@ export default function LoginPage() {
                   : 'text-[#6b6b6b] hover:text-[#f5f0e0]'
               }`}
             >
-              Criar conta
+              {t('login.tab_register')}
             </button>
           </div>
 
@@ -92,38 +110,38 @@ export default function LoginPage() {
 
             {tab === 'register' && (
               <div>
-                <label className="block text-xs text-[#8a8a8a] mb-1.5">Nome completo</label>
+                <label className="block text-xs text-[#8a8a8a] mb-1.5">{t('login.name')}</label>
                 <input
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
-                  placeholder="Seu nome"
+                  placeholder={t('login.placeholder_name')}
                   className="w-full bg-[#0a0a0a] border border-[#2a2a2a] rounded-lg px-3 py-2.5 text-sm text-[#f5f0e0] placeholder-[#444] focus:outline-none focus:border-[#d4a017] transition-colors"
                 />
               </div>
             )}
 
             <div>
-              <label className="block text-xs text-[#8a8a8a] mb-1.5">E-mail</label>
+              <label className="block text-xs text-[#8a8a8a] mb-1.5">{t('login.email')}</label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                placeholder="seu@email.com"
+                placeholder={t('login.placeholder_email')}
                 className="w-full bg-[#0a0a0a] border border-[#2a2a2a] rounded-lg px-3 py-2.5 text-sm text-[#f5f0e0] placeholder-[#444] focus:outline-none focus:border-[#d4a017] transition-colors"
               />
             </div>
 
             <div>
-              <label className="block text-xs text-[#8a8a8a] mb-1.5">Senha</label>
+              <label className="block text-xs text-[#8a8a8a] mb-1.5">{t('login.password')}</label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                placeholder="••••••••"
+                placeholder={t('login.placeholder_password')}
                 className="w-full bg-[#0a0a0a] border border-[#2a2a2a] rounded-lg px-3 py-2.5 text-sm text-[#f5f0e0] placeholder-[#444] focus:outline-none focus:border-[#d4a017] transition-colors"
               />
             </div>
@@ -131,7 +149,7 @@ export default function LoginPage() {
             {tab === 'login' && (
               <div className="text-right">
                 <span className="text-xs text-[#d4a017] opacity-80 cursor-pointer hover:opacity-100">
-                  Esqueci minha senha
+                  {t('login.forgot')}
                 </span>
               </div>
             )}
@@ -141,32 +159,28 @@ export default function LoginPage() {
               disabled={loading}
               className="w-full bg-[#d4a017] hover:bg-[#e8b420] disabled:opacity-50 disabled:cursor-not-allowed text-[#0a0a0a] font-medium text-sm py-2.5 rounded-lg transition-colors mt-2"
             >
-              {loading
-                ? 'Aguarde...'
-                : tab === 'login'
-                  ? 'Entrar na plataforma'
-                  : 'Criar minha conta'}
+              {loading ? t('login.btn_loading') : tab === 'login' ? t('login.btn_login') : t('login.btn_register')}
             </button>
 
           </form>
 
           <div className="flex items-center gap-3 my-5">
             <div className="flex-1 h-px bg-[#2a2a2a]" />
-            <span className="text-xs text-[#444]">ou</span>
+            <span className="text-xs text-[#444]">{t('login.or')}</span>
             <div className="flex-1 h-px bg-[#2a2a2a]" />
           </div>
 
           <p className="text-center text-xs text-[#555]">
             {tab === 'login' ? (
-              <>Não tem conta?{' '}
+              <>{t('login.no_account')}{' '}
                 <button onClick={() => { setTab('register'); setError('') }} className="text-[#d4a017] hover:opacity-80">
-                  Registre-se gratuitamente
+                  {t('login.register_link')}
                 </button>
               </>
             ) : (
-              <>Já tem conta?{' '}
+              <>{t('login.has_account')}{' '}
                 <button onClick={() => { setTab('login'); setError('') }} className="text-[#d4a017] hover:opacity-80">
-                  Faça login
+                  {t('login.login_link')}
                 </button>
               </>
             )}

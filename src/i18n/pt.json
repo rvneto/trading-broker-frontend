@@ -1,0 +1,59 @@
+{
+  "login": {
+    "title": "My Broker B3",
+    "subtitle": "Simulador de corretora",
+    "tab_login": "Entrar",
+    "tab_register": "Criar conta",
+    "email": "E-mail",
+    "password": "Senha",
+    "name": "Nome completo",
+    "forgot": "Esqueci minha senha",
+    "btn_login": "Entrar na plataforma",
+    "btn_register": "Criar minha conta",
+    "btn_loading": "Aguarde...",
+    "no_account": "Não tem conta?",
+    "register_link": "Registre-se gratuitamente",
+    "has_account": "Já tem conta?",
+    "login_link": "Faça login",
+    "or": "ou",
+    "placeholder_email": "seu@email.com",
+    "placeholder_password": "••••••••",
+    "placeholder_name": "Seu nome",
+    "error_generic": "Ocorreu um erro. Tente novamente."
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "orders": "Ordens",
+    "wallet": "Carteira",
+    "logout": "Sair"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "balance": "Saldo disponível",
+    "patrimony": "Patrimônio total",
+    "open_orders": "Ordens abertas",
+    "positions": "Posições"
+  },
+  "orders": {
+    "title": "Ordens",
+    "new_order": "Nova ordem",
+    "buy": "Compra",
+    "sell": "Venda",
+    "ticker": "Ativo",
+    "quantity": "Quantidade",
+    "price": "Preço",
+    "submit": "Enviar ordem",
+    "status_pending": "Pendente",
+    "status_executed": "Executada",
+    "status_rejected": "Rejeitada",
+    "status_cancelled": "Cancelada"
+  },
+  "wallet": {
+    "title": "Carteira",
+    "asset": "Ativo",
+    "quantity": "Quantidade",
+    "avg_price": "Preço médio",
+    "current_price": "Preço atual",
+    "pnl": "P&L"
+  }
+}

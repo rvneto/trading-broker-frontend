@@ -1,0 +1,59 @@
+{
+  "login": {
+    "title": "My Broker B3",
+    "subtitle": "Broker simulator",
+    "tab_login": "Sign in",
+    "tab_register": "Create account",
+    "email": "Email",
+    "password": "Password",
+    "name": "Full name",
+    "forgot": "Forgot my password",
+    "btn_login": "Sign in to platform",
+    "btn_register": "Create my account",
+    "btn_loading": "Please wait...",
+    "no_account": "Don't have an account?",
+    "register_link": "Sign up for free",
+    "has_account": "Already have an account?",
+    "login_link": "Sign in",
+    "or": "or",
+    "placeholder_email": "your@email.com",
+    "placeholder_password": "••••••••",
+    "placeholder_name": "Your name",
+    "error_generic": "An error occurred. Please try again."
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "orders": "Orders",
+    "wallet": "Wallet",
+    "logout": "Sign out"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "balance": "Available balance",
+    "patrimony": "Total patrimony",
+    "open_orders": "Open orders",
+    "positions": "Positions"
+  },
+  "orders": {
+    "title": "Orders",
+    "new_order": "New order",
+    "buy": "Buy",
+    "sell": "Sell",
+    "ticker": "Asset",
+    "quantity": "Quantity",
+    "price": "Price",
+    "submit": "Submit order",
+    "status_pending": "Pending",
+    "status_executed": "Executed",
+    "status_rejected": "Rejected",
+    "status_cancelled": "Cancelled"
+  },
+  "wallet": {
+    "title": "Wallet",
+    "asset": "Asset",
+    "quantity": "Quantity",
+    "avg_price": "Avg price",
+    "current_price": "Current price",
+    "pnl": "P&L"
+  }
+}
